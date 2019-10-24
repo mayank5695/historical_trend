@@ -16,7 +16,6 @@ object HistoricalTrend {
       .config("spark.cassandra.connection.host", "127.0.0.1")
       .master("local[2]")
       .getOrCreate()
-    import spark.implicits._
 
     // Cassandra config
     val cluster = Cluster.builder().addContactPoint("127.0.0.1").build()
@@ -25,6 +24,7 @@ object HistoricalTrend {
   }
 
   private def initializeTables(spark: SparkSession, session: Session): Unit = {
+    import spark.implicits._
     session.execute("CREATE KEYSPACE IF NOT EXISTS stock WITH REPLICATION = " +
       "{ 'class' : 'SimpleStrategy', 'replication_factor' : 1 };")
     session.execute("USE stock;")

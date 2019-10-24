@@ -2,24 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cc0a5244-02fe-49a8-8444-b8acad9c345a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build.sbt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/build.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/com/msquared/dataintensive/HistoricalTrend.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/com/msquared/dataintensive/model/Dow30Row.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/com/msquared/dataintensive/model/HistoricalPricesRow.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/com/msquared/dataintensive/model/NasdaqRow.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/scala/com/msquared/dataintensive/model/SP500Row.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/historical_trend.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/Dow30.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/Dow30.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/HistoricalPrices.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/HistoricalPrices.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/Nasdaq.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/Nasdaq.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/S&amp;P500.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/S&amp;P500.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/com/msquared/dataintensive/HistoricalTrend.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/com/msquared/dataintensive/HistoricalTrend.scala" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -54,8 +37,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/com/msquared/dataintensive/HistoricalTrend.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="23" column="36" lean-forward="true" selection-start-line="23" selection-start-column="36" selection-end-line="23" selection-end-column="36" />
+            <state relative-caret-position="255">
+              <caret line="35" column="22" lean-forward="true" selection-start-line="35" selection-start-column="22" selection-end-line="35" selection-end-column="22" />
               <folding>
                 <element signature="e#36#86#0" expanded="true" />
               </folding>
@@ -332,12 +315,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1571920815191</updated>
-      <workItem from="1571920818960" duration="6707000" />
+      <workItem from="1571920818960" duration="6907000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6707000" />
+    <option name="totallyTimeSpent" value="6907000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="973" y="0" width="1587" height="1040" extended-state="0" />
@@ -349,7 +332,7 @@
       <window_info id="Favorites" side_tool="true" />
       <window_info id="Capture Tool" />
       <window_info id="Learn" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2200393" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2200393" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Build" weight="0.32918552" />
       <window_info anchor="bottom" id="sbt-shell-toolwindow" />
@@ -362,7 +345,7 @@
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32918552" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32918552" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -530,8 +513,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/msquared/dataintensive/HistoricalTrend.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="23" column="36" lean-forward="true" selection-start-line="23" selection-start-column="36" selection-end-line="23" selection-end-column="36" />
+        <state relative-caret-position="255">
+          <caret line="35" column="22" lean-forward="true" selection-start-line="35" selection-start-column="22" selection-end-line="35" selection-end-column="22" />
           <folding>
             <element signature="e#36#86#0" expanded="true" />
           </folding>
