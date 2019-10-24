@@ -5,6 +5,7 @@ import com.datastax.spark.connector.{AllColumns, _}
 import com.msquared.dataintensive.model.{Dow30Row, HistoricalPricesRow, NasdaqRow, SP500Row}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.to_date
+import scalaj.http.Http
 
 
 object HistoricalTrend {
@@ -20,10 +21,10 @@ object HistoricalTrend {
     // Cassandra config
     val cluster = Cluster.builder().addContactPoint("127.0.0.1").build()
     val session = cluster.connect()
-    initializeTables(spark, session)
+    initializeCsvTables(spark, session)
   }
 
-  private def initializeTables(spark: SparkSession, session: Session): Unit = {
+  private def initializeCsvTables(spark: SparkSession, session: Session): Unit = {
     import spark.implicits._
     session.execute("CREATE KEYSPACE IF NOT EXISTS stock WITH REPLICATION = " +
       "{ 'class' : 'SimpleStrategy', 'replication_factor' : 1 };")
@@ -92,5 +93,11 @@ object HistoricalTrend {
         .options(Map("table" -> "sp500", "keyspace" -> "stock"))
         .save()
     }
+
+    // api key yLlytjZxWghSgkePdQbQhTGWdNCk5JOB
+
+    // Example request; I think it will be better if we just download all that data for couple of years;
+    // https://api.nytimes.com/svc/search/v2/articlesearch.json?fq=pub_date:(2017-02-10)&fl=web_url,pub_date,snippet,print_page,section_name,subsection_name,source,abstract,lead_paragraph&api-key=yLlytjZxWghSgkePdQbQhTGWdNCk5JOB
+
   }
 }
