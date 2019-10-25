@@ -7,7 +7,7 @@ The project finds points of interest in the stock data and see if it correlates 
 1. Create a directory on the host where Cassandra container will store its data, e.g. `/data/cassandra`
 1. Run Cassandra container with: 
 ```bash
-docker run -p 9042:9042 --rm --name cassandra -d cassandra:3.11
+docker run -p 9042:9042 --rm --name cassandra -v PATH_TO_CASSANDRA_DIR_CREATED:/var/lib/cassandra -d cassandra:3.11
 ```
 
 You can check if Cassandra is running by executing Cassandra shell in the container:
@@ -15,7 +15,7 @@ You can check if Cassandra is running by executing Cassandra shell in the contai
 docker exec -it cassandra cqlsh
 ``` 
 
-## HistoricalTrend
+## CsvCassandraImporter
 Make sure Cassandra is running! 
 
 Before you run the program, modify 12th line:
@@ -28,3 +28,15 @@ During first execution `stock` keyspace should be created and csv files should b
 `historical_prices`, `nasdaq` and `sp500`.
 
 To run the either use Intellj `Run`.
+
+## NewYorkTimesImporter
+Make sure Cassandra is running!
+
+This job will import data about articles from NYT API. You can specify number
+of months back from current day to download data for. 
+```scala
+val MONTHS_BACK_NUM = 12
+```
+
+During this job, Cassandra may be throwing exceptions from time to time, I don't know why.
+After some time I managed to download over 45k of articles from last year.
