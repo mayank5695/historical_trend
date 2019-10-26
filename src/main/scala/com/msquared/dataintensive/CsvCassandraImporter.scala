@@ -93,12 +93,5 @@ object CsvCassandraImporter {
         .options(Map("table" -> "sp500", "keyspace" -> "stock"))
         .save()
     }
-
-    // api key yLlytjZxWghSgkePdQbQhTGWdNCk5JOB
-
-    // Example request; I think it will be better if we just download all that data for couple of years;
-    // https://api.nytimes.com/svc/search/v2/articlesearch.json?fq=pub_date:(2017-02-10)&fl=web_url,pub_date,snippet,print_page,section_name,subsection_name,source,abstract,lead_paragraph&api-key=yLlytjZxWghSgkePdQbQhTGWdNCk5JOB
-
-
   }
 }

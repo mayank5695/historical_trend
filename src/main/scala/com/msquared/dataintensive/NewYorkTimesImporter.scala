@@ -1,15 +1,18 @@
 package com.msquared.dataintensive
 
+import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 import com.datastax.driver.core.{Cluster, Session}
 import com.datastax.spark.connector.{AllColumns, _}
-import org.apache.spark.sql.SparkSession
-import org.json4s._
+import com.msquared.dataintensive.model.NYTArticleRow
 import org.json4s.jackson.JsonMethods._
-import scalaj.http.Http
-
+import org.apache.spark.sql.SparkSession
+import org.json4s.JsonAST.JValue
+import org.json4s._
+import org.json4s.jackson.Serialization.read
 
 object NewYorkTimesImporter {
   def main(args: Array[String]): Unit = {
@@ -25,67 +28,31 @@ object NewYorkTimesImporter {
   }
 
   private def initializeNewYorkTimeTable(spark: SparkSession, session: Session): Unit = {
-    // This variable sets up the number of months back for which you want to download articles.
-    val MONTHS_BACK_NUM = 12
-
-    session.execute("CREATE KEYSPACE IF NOT EXISTS stock WITH REPLICATION = " +
-      "{ 'class' : 'SimpleStrategy', 'replication_factor' : 1 };")
+    import spark.implicits._
     session.execute("USE stock;")
 
     // ##### NYT Table Initialization
     session.execute(
       """
-        |CREATE TABLE IF NOT EXISTS raw_nyt (web_url text primary key, content text);
+        |CREATE TABLE IF NOT EXISTS nyt (web_url text primary key, snippet text, lead_paragraph text, abstra text, print_page text, source text, pub_date date, document_type text, news_desk text, section_name text, subsection_name text, type_of_material text, word_count text);
       """.stripMargin)
 
-    val startingDate = LocalDate.now().minusMonths(MONTHS_BACK_NUM)
-    val count = startingDate.until(LocalDate.now(), ChronoUnit.MONTHS)
-    val urls = spark.sparkContext.parallelize((0 until count.toInt).map(startingDate.plusMonths(_))).map(date => {
-      //      "https://api.nytimes.com/svc/search/v2/articlesearch.json?fq=pub_date:(" + ld.toString + ")&fl=" +
-      //        "web_url,pub_date,snippet,print_page,section_name,subsection_name,source,abstract,lead_paragraph" +
-      //        "&api-key=yLlytjZxWghSgkePdQbQhTGWdNCk5JOB"
-      "https://api.nytimes.com/svc/archive/v1/" + date.getYear.toString + "/" + date.getMonthValue.toString + ".json?api-key=yLlytjZxWghSgkePdQbQhTGWdNCk5JOB"
-    })
+    // This is a path to the file containing nyt articles data
+    val dataFilePath = "file:///C:/Projects/historical_trend/nyt-dump2/_temporary/0/_temporary/attempt_20191026183521_0000_m_000000_0/part-00000"
 
-    val responses = urls.map(url => {
-      var response = Http(url).asString.body
-      while (response.contains("faultstring")) {
-        Thread.sleep(10000)
-        response = Http(url).asString.body
-      }
-      val noMultimediaResponse = parse(response) transform {
-        case x => x transform {
-          case y => y transform {
-            case JArray(objs) => {
-              JArray(objs.map(_ transformField {
-                case ("multimedia", _) => ("multimedia", JNothing)
-                case ("byline", _) => ("byline", JNothing)
-                case ("keywords", _) => ("keywords", JNothing)
-                case ("headline", _) => ("headline", JNothing)
-                case ("_id", _) => ("_id", JNothing)
-              }))
-            }
-          }
+    spark.sparkContext.textFile(dataFilePath)
+      .map(line => line.substring(1, line.length - 1).split(",", 2))
+      .map(arr => {
+        implicit val formats = new DefaultFormats {
+          override def dateFormatter = new SimpleDateFormat("yyyy-mm-dd")
         }
-      }
-      noMultimediaResponse
-    }).flatMap(response => {
-      (response \\ "docs").asInstanceOf[JArray].children.map(child => (compact(render(child \ "web_url")), compact(render(child))))
-    }).saveToCassandra("stock", "raw_nyt", AllColumns)
-    //    val df = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
-    //      .load("file:///" + projectPath + "/data/Dow30.csv")
-    //    val df2 = df.withColumn("date", to_date($"date", "yyyy-mm-dd"))
-    //    df2.write.format("org.apache.spark.sql.cassandra")
-    //      .options(Map("table" -> "dow30", "keyspace" -> "stock"))
-    //      .save()
-    //    String.format()
-
-    // api key yLlytjZxWghSgkePdQbQhTGWdNCk5JOB
-
-    // Example request; I think it will be better if we just download all that data for couple of years;
-    // https://api.nytimes.com/svc/search/v2/articlesearch.json?fq=pub_date:(2017-02-10)&fl=web_url,pub_date,snippet,print_page,
-    // section_name,subsection_name,source,abstract,lead_paragraph&api-key=yLlytjZxWghSgkePdQbQhTGWdNCk5JOB
-
-
+        val json = arr(1).replace("\"abstract\"", "\"abstra\"")
+        val jsonObject = parse(json)
+        val properDates = jsonObject.transformField {
+          case ("pub_date", JString(x)) => ("pub_date", JString(x.substring(0, 10)))
+        }
+        val article = read[NYTArticleRow](compact(render(properDates)))
+        article
+      }).saveToCassandra("stock", "nyt", AllColumns)
   }
 }
