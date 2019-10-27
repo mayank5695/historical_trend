@@ -1,3 +1,6 @@
+"""
+This simple flask app provides restAPIs to connect with backend in mongodb and use View function of flask to render templates.
+"""
 from flask import Flask, request
 from flask.helpers import send_from_directory
 
