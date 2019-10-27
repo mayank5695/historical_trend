@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Using Assistant from Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Assistant" rel="stylesheet">
+    <title>termbase</title>
+
+    <!-- Bootstrap Whatever it is that's on the server (3.something I believe) Core CSS -->
+    <link href="/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 70px;
+            font-family: 'Assistant', sans-serif;
+            height: 100%;
+            min-height: 100vh;
+            position: relative;
+            margin: 0;
+        }
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="row">
+
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse col-xs-5 col-sm-5 col-md-5 col-lg-5" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a class="navbar-brand" href="/">Stock reader</a></li>
+
+                    </ul>
+                </div>
+
+                <div class="input-group col-xs-6 col-sm-6 col-md-6 col-lg-6" style="margin-top: 0.6em;">
+                    <input type="text" id="search_box" class="form-control" placeholder="type to see more result" value="{{term}}">
+                     <select id ="list" onchange ="javascript:getSelectValue()">
+                            <option value ="5"> top5 </option>
+                            <option value ="10"> top10 </option>
+                            <option value = "20"> top20 </option>
+                        </select>
+                        <button class="btn btn-info" type="button" onclick="javascript:search()">
+                            <b>&#128269;</b>
+                            <!-- <i class="fa fa-fw fa-search"></i> -->
+                        </button>
+                </div>
+            <!-- /.navbar-collapse -->
+            </div>
+                </div>
+        </div>
+        <!-- /.container -->
+    </nav>
+    <br/>
+
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col">&nbsp;</div>
+        </div>
+
+        <!-- Row with search phrase -->
+        <div class="row">
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-left">
+                <h2>{{ term }}</h2>
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>
+        </div>
+        <div class="row">&nbsp</div>
+
+
+        <!-- Rows with results-->
+        {% for data in data_points %}
+        <div class="row">
+            <hr style="margin-top: 1em; margin-bottom: 1em; border-top-color: #ccc;"/>
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 text-left">
+                <h4 style="margin-top: 0.2em">
+                    {{ data.date }}
+                    <sup>difference from last day : {{ data.difference_close }}
+                    </sup>
+                </h4>
+
+                 {% for url in data.web_url %}
+                <a href={{ url }}><h5>
+                     {{ url }}
+                </h5> </a>
+                     {% endfor %}
+            </div>
+
+            <div class="col-sm-6">
+                <h4>Snippets</h4>
+                {% for snip in data.snippet %}
+                    <h5>{{ snip }}</h5>
+                {% endfor %}
+            </div>
+         </div>
+        {% endfor %}
+    </div>
+
+
+</body>
+
+<!-- Translate javascript -->
+<script src="/js/translation.js"></script>
+
+<!-- jQuery Version 1.11.1 -->
+<script src="/js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Fill content of language boxes -->
+<script type="text/javascript">
+    fillLanguageBoxes( "{{from_language}}", "{{to_language}}" );
+</script>
+
+</html>
