@@ -3,7 +3,7 @@ package com.msquared.dataintensive.model
 import java.sql.Date
 
 case class StockRow(
-                     date: Option[Date],
+                     date: Date,
                      high: Option[Double],
                      low: Option[Double],
                      open: Option[Double],

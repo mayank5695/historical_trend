@@ -1,17 +1,15 @@
 package com.msquared.dataintensive
 
+import java.sql.Date
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Date
 
 import com.datastax.driver.core.{Cluster, Session}
-import com.datastax.spark.connector.{AllColumns, _}
+import com.datastax.spark.connector._
+import com.datastax.spark.connector.AllColumns
 import com.msquared.dataintensive.model.NYTArticleRow
-import org.json4s.jackson.JsonMethods._
 import org.apache.spark.sql.SparkSession
-import org.json4s.JsonAST.JValue
 import org.json4s._
+import org.json4s.jackson.JsonMethods._
 import org.json4s.jackson.Serialization.read
 
 object NewYorkTimesImporter {
@@ -38,20 +36,24 @@ object NewYorkTimesImporter {
       """.stripMargin)
 
     // This is a path to the file containing nyt articles data
-    val dataFilePath = "file:///C:/Projects/historical_trend/nyt-dump2/_temporary/0/_temporary/attempt_20191026183521_0000_m_000000_0/part-00000"
+    val dataFilePath = "file:///C:/Projects/historical_trend/nyt-dump3/part-00000"
 
-    spark.sparkContext.textFile(dataFilePath)
+    val rdd = spark.sparkContext.textFile(dataFilePath)
       .map(line => line.substring(1, line.length - 1).split(",", 2))
       .map(arr => {
-        implicit val formats = new DefaultFormats {
-          override def dateFormatter = new SimpleDateFormat("yyyy-mm-dd")
-        }
+
+
+        case object DateSerializer extends CustomSerializer[java.sql.Date](format => ( {
+          case JString(s) => Date.valueOf(s.substring(0, 10))
+          case JNull => null
+        }, {
+          case d: Date => JString(d.toString)
+        }))
+
+        implicit val formats: Formats = DefaultFormats + DateSerializer
         val json = arr(1).replace("\"abstract\"", "\"abstra\"")
         val jsonObject = parse(json)
-        val properDates = jsonObject.transformField {
-          case ("pub_date", JString(x)) => ("pub_date", JString(x.substring(0, 10)))
-        }
-        val article = read[NYTArticleRow](compact(render(properDates)))
+        val article = read[NYTArticleRow](json)
         article
       }).saveToCassandra("stock", "nyt", AllColumns)
   }

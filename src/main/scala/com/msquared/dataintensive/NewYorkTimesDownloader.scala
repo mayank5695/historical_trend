@@ -36,6 +36,8 @@ object NewYorkTimesDownloader {
     val urls = spark.sparkContext.parallelize((0 until count.toInt).map(startingDate.plusMonths(_))).map(date => {
       "https://api.nytimes.com/svc/archive/v1/" + date.getYear.toString + "/" + date.getMonthValue.toString + ".json?api-key=yLlytjZxWghSgkePdQbQhTGWdNCk5JOB"
     })
+    val urlcount = urls.count()
+    println("urls count: " + urlcount)
 
     val responses = urls.map(url => {
       var response = Http(url).asString.body
@@ -61,6 +63,6 @@ object NewYorkTimesDownloader {
       noMultimediaResponse
     }).flatMap(response => {
       (response \\ "docs").asInstanceOf[JArray].children.map(child => (compact(render(child \ "web_url")), compact(render(child))))
-    }).coalesce(1).saveAsTextFile("nyt-dump2")
+    }).coalesce(1).saveAsTextFile("nyt-dump3")
   }
 }

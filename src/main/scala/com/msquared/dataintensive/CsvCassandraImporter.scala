@@ -30,67 +30,57 @@ object CsvCassandraImporter {
     session.execute("USE stock;")
 
     // ##### Dow30 Table Initialization
-    session.execute(
-      """
-        |CREATE TABLE IF NOT EXISTS dow30 (date date primary key, high float, low float, open float, close float, adj_close float, volume float);
-      """.stripMargin)
-    val dow30Count = spark.sparkContext.cassandraTable[StockRow]("stock", "dow30").count()
-    println(dow30Count)
-    if (dow30Count == 0) {
-      val df = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
-        .load("file:///" + projectPath + "/data/Dow30.csv")
-      val df2 = df.withColumn("date", to_date($"date", "yyyy-mm-dd"))
-      df2.write.format("org.apache.spark.sql.cassandra")
-        .options(Map("table" -> "dow30", "keyspace" -> "stock"))
-        .save()
-    }
+//    session.execute(
+//      """
+//        |CREATE TABLE IF NOT EXISTS dow30 (date date primary key, high float, low float, open float, close float, adj_close float, volume float);
+//      """.stripMargin)
+//
+//    val dfdow = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
+//      .load("file:///" + projectPath + "/data/Dow30.csv")
+//
+//    dfdow.write.format("org.apache.spark.sql.cassandra")
+//      .options(Map("table" -> "dow30", "keyspace" -> "stock"))
+//      .save()
 
     // ##### Historical Prices Table Initialization
     session.execute(
       """
         |CREATE TABLE IF NOT EXISTS historical_prices (date date primary key, high float, low float, open float, close float, adj_close float, volume float);
       """.stripMargin)
-    val historicalPricesCount = spark.sparkContext.cassandraTable[StockRow]("stock", "historical_prices").count()
-    println(historicalPricesCount)
-    if (historicalPricesCount == 0) {
-      val df = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
-        .load("file:///" + projectPath + "/data/HistoricalPrices.csv")
-      val df2 = df.withColumn("date", to_date($"date", "MM/dd/yy"))
-      df2.write.format("org.apache.spark.sql.cassandra")
-        .options(Map("table" -> "historical_prices", "keyspace" -> "stock"))
-        .save()
-    }
+
+    val dfhp = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
+      .load("file:///" + projectPath + "/data/HistoricalPrices.csv")
+    val df2hp = dfhp.withColumn("date", to_date($"date", "MM/dd/yy"))
+    val count = df2hp.dropDuplicates("date").count()
+    println(count)
+    df2hp.write.format("org.apache.spark.sql.cassandra")
+      .options(Map("table" -> "historical_prices", "keyspace" -> "stock"))
+      .save()
+
 
     // ##### Nasdaq Table Initialization
     session.execute(
       """
         |CREATE TABLE IF NOT EXISTS nasdaq (date date primary key, high float, low float, open float, close float, adj_close float, volume float);
       """.stripMargin)
-    val nasdaqCount = spark.sparkContext.cassandraTable[StockRow]("stock", "nasdaq").count()
-    println(nasdaqCount)
-    if (nasdaqCount == 0) {
-      val df = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
-        .load("file:///" + projectPath + "/data/Nasdaq.csv")
-      val df2 = df.withColumn("date", to_date($"date", "yyyy-mm-dd"))
-      df2.write.format("org.apache.spark.sql.cassandra")
-        .options(Map("table" -> "nasdaq", "keyspace" -> "stock"))
-        .save()
-    }
+
+    val dfnas = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
+      .load("file:///" + projectPath + "/data/Nasdaq.csv")
+    dfnas.write.format("org.apache.spark.sql.cassandra")
+      .options(Map("table" -> "nasdaq", "keyspace" -> "stock"))
+      .save()
+
 
     // ##### sp500 Table Initialization
     session.execute(
       """
         |CREATE TABLE IF NOT EXISTS sp500 (date date primary key, high float, low float, open float, close float, adj_close float, volume float);
       """.stripMargin)
-    val sp500count = spark.sparkContext.cassandraTable[StockRow]("stock", "sp500").count()
-    println(sp500count)
-    if (sp500count == 0) {
-      val df = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
-        .load("file:///" + projectPath + "/data/S&P500.csv")
-      val df2 = df.withColumn("date", to_date($"date", "yyyy-mm-dd"))
-      df2.write.format("org.apache.spark.sql.cassandra")
-        .options(Map("table" -> "sp500", "keyspace" -> "stock"))
-        .save()
-    }
+
+    val dfsp = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
+      .load("file:///" + projectPath + "/data/S&P500.csv")
+    dfsp.write.format("org.apache.spark.sql.cassandra")
+      .options(Map("table" -> "sp500", "keyspace" -> "stock"))
+      .save()
   }
 }

@@ -1,11 +1,9 @@
 package com.msquared.dataintensive
 
-import java.util.Date
-
 import com.datastax.driver.core.{Cluster, Session}
 import com.datastax.spark.connector._
 import com.msquared.dataintensive.model.StockRow
-import org.apache.spark.sql.{Encoder, SparkSession}
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.expressions._
 import org.apache.spark.sql.functions._
 
@@ -35,9 +33,10 @@ object DiffCounter {
       """.stripMargin)
 
     import spark.implicits._
-    val dow30rdd = spark.sparkContext.cassandraTable[StockRow]("stock", fromTableName)
+    val stockRdd = spark.sparkContext.cassandraTable[StockRow]("stock", fromTableName)
+
     val w = Window.partitionBy().orderBy("date")
-    val dfDiffClose = dow30rdd.toDF().withColumn("difference_close", $"close" - when(
+    val dfDiffClose = stockRdd.toDF().withColumn("difference_close", $"close" - when(
       lag("close", 1).over(w).isNull, 0)
       .otherwise(lag("close", 1).over(w)))
     val dfDiffOpen = dfDiffClose.withColumn("difference_open", $"open" - when(
