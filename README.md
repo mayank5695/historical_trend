@@ -40,3 +40,18 @@ val MONTHS_BACK_NUM = 12
 
 During this job, Cassandra may be throwing exceptions from time to time, I don't know why.
 After some time I managed to download over 45k of articles from last year.
+
+# Running frontend
+In order to run frontend, make sure that mongodb is installed and it is running in the background.
+In the folder ```Frontend```, there is ```requirements.txt``` which defines all the requirements needed for frontend application to run.
+
+Once all the prerequisites are installed. Follow the instructions to run the flask application.
+
+Go to the terminal and go to the frontend folder. Run the following commands :
+
+```python3 jsonTomongo.py```
+
+```python3 app.py```
+
+This will run the server. Follow the link the terminal which will redirect you to the web page.
+
