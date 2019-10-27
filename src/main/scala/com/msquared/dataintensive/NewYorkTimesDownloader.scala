@@ -30,7 +30,7 @@ object NewYorkTimesDownloader {
     session.execute("CREATE KEYSPACE IF NOT EXISTS stock WITH REPLICATION = " +
       "{ 'class' : 'SimpleStrategy', 'replication_factor' : 1 };")
     session.execute("USE stock;")
-    
+
     val startingDate = LocalDate.now().minusMonths(MONTHS_BACK_NUM)
     val count = startingDate.until(LocalDate.now(), ChronoUnit.MONTHS)
     val urls = spark.sparkContext.parallelize((0 until count.toInt).map(startingDate.plusMonths(_))).map(date => {
