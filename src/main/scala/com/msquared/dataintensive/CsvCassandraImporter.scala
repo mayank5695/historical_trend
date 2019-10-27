@@ -1,8 +1,6 @@
 package com.msquared.dataintensive
 
 import com.datastax.driver.core.{Cluster, Session}
-import com.datastax.spark.connector._
-import com.msquared.dataintensive.model.StockRow
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.to_date
 
@@ -29,18 +27,18 @@ object CsvCassandraImporter {
       "{ 'class' : 'SimpleStrategy', 'replication_factor' : 1 };")
     session.execute("USE stock;")
 
-    // ##### Dow30 Table Initialization
-//    session.execute(
-//      """
-//        |CREATE TABLE IF NOT EXISTS dow30 (date date primary key, high float, low float, open float, close float, adj_close float, volume float);
-//      """.stripMargin)
-//
-//    val dfdow = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
-//      .load("file:///" + projectPath + "/data/Dow30.csv")
-//
-//    dfdow.write.format("org.apache.spark.sql.cassandra")
-//      .options(Map("table" -> "dow30", "keyspace" -> "stock"))
-//      .save()
+//     ##### Dow30 Table Initialization
+    session.execute(
+      """
+        |CREATE TABLE IF NOT EXISTS dow30 (date date primary key, high float, low float, open float, close float, adj_close float, volume float);
+      """.stripMargin)
+
+    val dfdow = spark.read.format("csv").option("header", value = true).option("ignoreLeadingWhiteSpace", value = true)
+      .load("file:///" + projectPath + "/data/Dow30.csv")
+
+    dfdow.write.format("org.apache.spark.sql.cassandra")
+      .options(Map("table" -> "dow30", "keyspace" -> "stock"))
+      .save()
 
     // ##### Historical Prices Table Initialization
     session.execute(

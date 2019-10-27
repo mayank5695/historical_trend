@@ -26,6 +26,8 @@ object NewYorkTimesDownloader {
   private def initializeNewYorkTimeTable(spark: SparkSession, session: Session): Unit = {
     // This variable sets up the number of months back for which you want to download articles.
     val MONTHS_BACK_NUM = 240
+    // This variable sets up the path to the file where the results will be stored.
+    val RESULT_PATH_FILE = "nyt-dump3"
 
     session.execute("CREATE KEYSPACE IF NOT EXISTS stock WITH REPLICATION = " +
       "{ 'class' : 'SimpleStrategy', 'replication_factor' : 1 };")
@@ -63,6 +65,6 @@ object NewYorkTimesDownloader {
       noMultimediaResponse
     }).flatMap(response => {
       (response \\ "docs").asInstanceOf[JArray].children.map(child => (compact(render(child \ "web_url")), compact(render(child))))
-    }).coalesce(1).saveAsTextFile("nyt-dump3")
+    }).coalesce(1).saveAsTextFile(RESULT_PATH_FILE)
   }
 }
